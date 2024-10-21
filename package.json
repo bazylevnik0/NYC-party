@@ -1,0 +1,22 @@
+{
+  "name": "nyc-party",
+  "version": "0.0.0",
+  "description": "3D chat",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "temporary"
+  },
+  "keywords": [
+    "WebGL",
+    "WebXR"
+  ],
+  "author": "bazylevnik0",
+  "license": "CC-BY-4.0",
+  "dependencies": {
+    "express": "^4.21.1"
+  }
+}
