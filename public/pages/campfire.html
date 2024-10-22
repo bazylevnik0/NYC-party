@@ -17,7 +17,9 @@
       }
     </script>
   </head>
-  <body></body>
+  <body>
+    <button id="exit">EXIT</button>
+  </body>
   <script type="module">
     import * as THREE from "three";
 
@@ -47,5 +49,16 @@
 
       renderer.render(scene, camera);
     }
+
+    let params = new URLSearchParams(window.location.search);
+    let nickname = params.get("nickname");
+    let avatar = params.get("avatar");
+    console.log(nickname, avatar);
+
+    let button_exit = document.getElementById("exit");
+    button_exit.addEventListener("click", () => {
+      window.location =
+        location.protocol + "//" + location.host + "/exit?nickname=" + nickname;
+    });
   </script>
 </html>
