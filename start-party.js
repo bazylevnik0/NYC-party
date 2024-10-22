@@ -13,7 +13,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/enter", (req, res) => {
-  res.sendFile("/public/pages/enter.html", op);
+  res.sendFile("/public/pages/join.html", op);
 });
 
 app.get("/exit", (req, res) => {
@@ -24,7 +24,7 @@ app.get("/exit", (req, res) => {
       guests.splice(i, 1);
     }
   }
-  res.sendFile("/public/pages/enter.html", op);
+  res.sendFile("/public/pages/join.html", op);
   console.log(guests);
 });
 
@@ -52,3 +52,7 @@ class Guest {
     this.avatar = avatar;
   }
 }
+
+app.get("/data", (req, res) => {
+  res.json(guests);
+});
