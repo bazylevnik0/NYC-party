@@ -52,7 +52,27 @@ class Guest {
     this.avatar = avatar;
   }
 }
+var phrases = [];
+/*
+var phrases_interval = setInterval(() => {
+  if (phrases[0] && !phrases[0].activated) {
+    setTimeout(() => {
+      phrases.shift();
+    }, phrases[0].time);
+  }
+}, 1000);
+*/
 
 app.get("/data", (req, res) => {
   res.json(guests);
+});
+
+app.get("/say", (req, res) => {
+  console.log("test");
+  phrases.push({
+    chunks: JSON.parse(req.query.chunks),
+    time: JSON.parse(req.query.time),
+    activated: false,
+  });
+  console.log(phrases);
 });
