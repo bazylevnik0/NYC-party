@@ -58,9 +58,40 @@
     guests.get_data();
 
     guests.build = function () {
+      guests.geometries = [];
+      guests.materials = [];
+      for (let i = 0; i < guests.cubes; i++) {
+        scene.remove(guests.cubes[i]);
+      }
       for (let i = 0; i < guests.data.length; i++) {
         guests.geometries[i] = new THREE.BoxGeometry(1, 1, 1);
-        guests.materials[i] = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        switch (guests.data[i].avatar) {
+          case "human":
+            guests.materials[i] = new THREE.MeshBasicMaterial({
+              color: 0xff0000,
+            });
+            break;
+          case "robot":
+            guests.materials[i] = new THREE.MeshBasicMaterial({
+              color: 0x00ff00,
+            });
+            break;
+          case "sceleton":
+            guests.materials[i] = new THREE.MeshBasicMaterial({
+              color: 0x0000ff,
+            });
+            break;
+          case "zombie":
+            guests.materials[i] = new THREE.MeshBasicMaterial({
+              color: 0xffff00,
+            });
+            break;
+          case "ghost":
+            guests.materials[i] = new THREE.MeshBasicMaterial({
+              color: 0xff00ff,
+            });
+            break;
+        }
         guests.cubes[i] = new THREE.Mesh(
           guests.geometries[i],
           guests.materials[i]
