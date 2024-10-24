@@ -1,4 +1,5 @@
 const express = require("express");
+const bodyParser = require('body-parser')
 const app = express();
 const port = 3000;
 const path = require("path");
@@ -7,6 +8,8 @@ const op = {
 };
 
 app.use(express.static("public"));
+// support parsing of application/json type post data
+app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
@@ -67,11 +70,11 @@ app.get("/data", (req, res) => {
   res.json(guests);
 });
 
-app.get("/say", (req, res) => {
+app.post("/say", (req, res) => {
   console.log("test");
   phrases.push({
-    data: JSON.parse(req.query.data),
-    time: JSON.parse(req.query.time),
+    data: req.body.data,
+    time: req.body.time,
     activated: false,
   });
   console.log(phrases);

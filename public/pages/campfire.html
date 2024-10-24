@@ -204,15 +204,15 @@
         location.protocol +
         "//" +
         location.host +
-        "/say?data=" +
-        JSON.stringify(Array.from(new Uint8Array(buffer))) +
-        "&" +
-        "time=" +
-        JSON.stringify(time);
+        "/say";
       console.log(url);
       let xmlHttp = new XMLHttpRequest();
-      xmlHttp.open("GET", url, false); // false for synchronous request
-      xmlHttp.send(null);
+      xmlHttp.open("POST", url, false); // false for synchronous request
+      xmlHttp.setRequestHeader('Content-Type', 'application/json;charset=UTF-8')
+      xmlHttp.send(JSON.stringify({
+                          data: JSON.stringify(Array.from(new Uint8Array(buffer))),
+                          time: JSON.stringify(time),
+                          }));
     };
     guests.get_data();
   </script>
