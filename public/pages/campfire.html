@@ -196,17 +196,16 @@
       console.log(mediaRecorder.state);
       console.log("recorder stopped");
     });
-    guests.say = function () {
+    guests.say = async function () {
       const blob = new Blob(chunks, { type: "audio/ogg; codecs=opus" });
-      var fd = new FormData();
-      fd.append("fname", "blob.ogg");
-      fd.append("data", blob);
-      let url =
+      const buffer = await blob.arrayBuffer();
+      //need to shape body of request or change the type!
+       let url =
         location.protocol +
         "//" +
         location.host +
-        "/say?chunks=" +
-        JSON.stringify(blob) +
+        "/say?data=" +
+        JSON.stringify(Array.from(new Uint8Array(buffer))) +
         "&" +
         "time=" +
         JSON.stringify(time);
