@@ -161,7 +161,6 @@
           mediaRecorder = new MediaRecorder(stream);
           mediaRecorder.addEventListener("dataavailable", (event) => {
             chunks.push(event.data);
-            console.log(event.data);
           });
         })
 
@@ -179,7 +178,7 @@
     button_record.addEventListener("click", () => {
       console.log("record");
 
-      chunks = [];
+      //chunks = [];
       time = 1;
       mediaRecorder.start(100);
       console.log(mediaRecorder.state);
@@ -198,12 +197,16 @@
       console.log("recorder stopped");
     });
     guests.say = function () {
+      const blob = new Blob(chunks, { type: "audio/ogg; codecs=opus" });
+      var fd = new FormData();
+      fd.append("fname", "blob.ogg");
+      fd.append("data", blob);
       let url =
         location.protocol +
         "//" +
         location.host +
         "/say?chunks=" +
-        JSON.stringify(chunks) +
+        JSON.stringify(blob) +
         "&" +
         "time=" +
         JSON.stringify(time);
@@ -212,30 +215,6 @@
       xmlHttp.open("GET", url, false); // false for synchronous request
       xmlHttp.send(null);
     };
-
-    /*
-    guests.say = async function () {
-      const url =
-        location.protocol +
-        "//" +
-        location.host +
-        "/say" +
-        "?" +
-        "chunks=" +
-        JSON.stringify(chunks) +
-        "&" +
-        "time=" +
-        JSON.stringify(time);
-      try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error(`Response status: ${response.status}`);
-        }
-      } catch (error) {
-        console.error(error.message);
-      }
-    };
-    */
     guests.get_data();
   </script>
 </html>

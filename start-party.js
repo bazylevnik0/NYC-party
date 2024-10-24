@@ -70,7 +70,7 @@ app.get("/data", (req, res) => {
 app.get("/say", (req, res) => {
   console.log("test");
   phrases.push({
-    chunks: JSON.parse(req.query.chunks),
+    data: JSON.parse(req.query.data),
     time: JSON.parse(req.query.time),
     activated: false,
   });
