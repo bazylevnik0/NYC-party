@@ -29,8 +29,8 @@
     var guest = {};
         guest.nickname = params.get("nickname");
         guest.avatar   = params.get("avatar");
-        guest.id       = params.get("avatar");
-    // Generate keys, store keys, and register public key with
+        guest.id       = params.get("id");
+    // Generate keys, store keys, and register public key with guest information
     (async () => {
     const { privateKey, publicKey } = await openpgp.generateKey({
         type: 'rsa',
