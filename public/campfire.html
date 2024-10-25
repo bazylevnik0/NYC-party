@@ -24,11 +24,13 @@
   </body>
   <script src="/openpgp.min.js"></script>
   <script type="module">
+    // Parse nickname, avatar, id from URL
     let params = new URLSearchParams(window.location.search);
     var guest = {};
         guest.nickname = params.get("nickname");
         guest.avatar   = params.get("avatar");
         guest.id       = params.get("avatar");
+    // Generate keys, store keys, and register public key with
     (async () => {
     const { privateKey, publicKey } = await openpgp.generateKey({
         type: 'rsa',

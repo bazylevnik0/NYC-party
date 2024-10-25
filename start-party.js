@@ -18,10 +18,11 @@ app.listen(port, () => {
 var guests  = [];
 var phrases = [];
 class Guest {
-  constructor(nickname, avatar, id) {
+  constructor(nickname, avatar, id, public_key) {
     this.nickname = nickname;
     this.avatar = avatar;
     this.id = id;
+    this.public_key = public_key;
   }
 }
 
@@ -37,15 +38,17 @@ app.post("/join", (req, res) => {
 });
 
 app.get("/campfire", (req, res) => {
-  let guest = new Guest(req.query.nickname, req.query.avatar, req.query.id);
   res.sendFile("/public/campfire.html", root);
 });
 
 app.post("/register", (req, res) => {
-  console.log("POST: /register, nickname: "     , req.body.nickname);
-  console.log("POST: /register, avatar: "       , req.body.avatar);
-  console.log("POST: /register, id: "           , req.body.id);
-  console.log("POST: /public_key, public_key: " , req.body.public_key);
+  console.log("POST: /register, nickname: "   , req.body.nickname);
+  console.log("POST: /register, avatar: "     , req.body.avatar);
+  console.log("POST: /register, id: "         , req.body.id);
+  console.log("POST: /register, public_key: " , req.body.public_key);
+  let guest = new Guest(req.body.nickname, req.body.avatar, req.body.id, req.body.public_key);
+  guests.push(guest);
+  console.log("/POST /register, guests: ", guests);
 });
 
 /*
