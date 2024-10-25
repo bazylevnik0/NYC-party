@@ -8,31 +8,25 @@
         margin: 0;
       }
     </style>
-    <script type="importmap">
-      {
-        "imports": {
-          "three": "https://cdn.jsdelivr.net/npm/three@v0.149.0/build/three.module.js",
-          "three/addons/": "https://cdn.jsdelivr.net/npm/three@v0.149.0/examples/jsm/",
-        }
-      }
-    </script>
   </head>
   <body>
     <button id="exit">EXIT</button>
     <button id="audiorecord">record</button>
     <button id="audiostop">stop</button>
   </body>
-  <script src="/openpgp.min.js"></script>
+  <script src="/openpgp.js"></script>
   <script type="module">
+    import * as THREE from "/three.module.js";
+
     // Parse nickname, avatar, id from URL
     let params = new URLSearchParams(window.location.search);
     var guest = {};
         guest.nickname   = params.get("nickname");
         guest.avatar     = params.get("avatar");
         guest.id         = params.get("id");
-        guest.passphrase = Math.random();
+        guest.passphrase = Math.random(); // sort of "the session generating seed"
 
-    // Generate keys, store keys, and register public key with guest information
+    // Generate the guest keys, store keys
     (async () => {
     const { privateKey, publicKey } = await openpgp.generateKey({
         type: 'rsa',
@@ -40,10 +34,10 @@
         userIDs: [{ nickname: guest.nickname, avatar: guest.avatar, id: guest.id }],
         passphrase: guest.passphrase,
     });
-    console.log( "My public key: ", publicKey);
     guest.public_key  = publicKey;
     guest.private_key = privateKey;
 
+    // Register the public key with guest information
     let url_register =
         location.protocol +
         "//" +
@@ -60,15 +54,14 @@
     }));
     })();
 
-    // Controls
+    // Controls UI
+    // Exit
     let button_exit = document.getElementById("exit");
     button_exit.addEventListener("click", () => {
+    // Generate signature to verify exit action
       (async () => {
-        const publicKeyArmored = guest.public_key;
-        const privateKeyArmored = guest.private_key;
-
-        const publicKey  = await openpgp.readKey({ armoredKey: publicKeyArmored });
-        const privateKey = await openpgp.readPrivateKey({ armoredKey: privateKeyArmored });
+        const publicKey  = await openpgp.readKey({ armoredKey: guest.public_key });
+        const privateKey = await openpgp.readPrivateKey({ armoredKey: guest.private_key });
 
         const message = await openpgp.createMessage({ text: 'exit' });
         const detachedSignature = await openpgp.sign({
@@ -76,7 +69,7 @@
           signingKeys: privateKey,
           detached : true
         });
-
+        // Send signature - request of deleting from server
         let url_exit =
             location.protocol +
             "//" +
@@ -93,6 +86,21 @@
         window.location = location.protocol + "//" + location.host;
        })();
     });
+
+        const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
+
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    //renderer.setAnimationLoop(animate);
+    document.body.appendChild(renderer.domElement);
+
+    // Rendering of 3D
     /*
     import * as THREE from "three";
 

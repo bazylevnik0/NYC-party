@@ -17,7 +17,8 @@
   "author": "bazylevnik0",
   "license": "CC-BY-4.0",
   "dependencies": {
-    "express": "^4.21.1"
+    "express": "^4.21.1",
+    "three": "^0.169.0"
   },
   "devDependencies": {
     "openpgp": "^5.11.2"
