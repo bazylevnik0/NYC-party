@@ -83,8 +83,11 @@ app.post("/exit", (req, res) => {
     try {
         await verified; // throws on invalid signature
         console.log('Signed by key id ' + keyID.toHex());
-        guests.splice(guest_number,1);
-        console.log(guests);
+        if (verified) {
+          guests.splice(guest_number,1);
+          console.log(guests);
+          console.log(verified);
+        }
     } catch (e) {
         throw new Error('Signature could not be verified: ' + e.message);
     }
