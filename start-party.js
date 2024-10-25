@@ -93,6 +93,9 @@ app.post("/exit", (req, res) => {
   })();
 });
 
+app.get("/guests_get", (req, res) => {
+    res.json(guests);
+});
 /*
 var phrases = [];
 var phrases_interval = setInterval(() => {
@@ -110,16 +113,7 @@ class Guest {
     this.avatar = avatar;
   }
 }
-app.get("/data_get", (req, res) => {
-  switch (req.query.get) {
-    case "guests"  :
-      res.json(guests);
-      break;
-    case "phrases" :
-      res.json(phrases);
-      break;
-  }
-});
+
 
 app.post("/say", (req, res) => {
   console.log("test");

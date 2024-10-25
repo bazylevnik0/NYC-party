@@ -19,8 +19,8 @@
     import * as THREE from "/three.module.js";
 
     // Parse nickname, avatar, id from URL
-    let params = new URLSearchParams(window.location.search);
     var guest = {};
+    let params = new URLSearchParams(window.location.search);
         guest.nickname   = params.get("nickname");
         guest.avatar     = params.get("avatar");
         guest.id         = params.get("id");
@@ -28,7 +28,7 @@
 
     // Generate the guest keys, store keys
     (async () => {
-    const { privateKey, publicKey } = await openpgp.generateKey({
+    let { privateKey, publicKey } = await openpgp.generateKey({
         type: 'rsa',
         rsaBits: 4096,
         userIDs: [{ nickname: guest.nickname, avatar: guest.avatar, id: guest.id }],
@@ -60,11 +60,11 @@
     button_exit.addEventListener("click", () => {
     // Generate signature to verify exit action
       (async () => {
-        const publicKey  = await openpgp.readKey({ armoredKey: guest.public_key });
-        const privateKey = await openpgp.readPrivateKey({ armoredKey: guest.private_key });
+        let publicKey  = await openpgp.readKey({ armoredKey: guest.public_key });
+        let privateKey = await openpgp.readPrivateKey({ armoredKey: guest.private_key });
 
-        const message = await openpgp.createMessage({ text: 'exit' });
-        const detachedSignature = await openpgp.sign({
+        let message = await openpgp.createMessage({ text: 'exit' });
+        let detachedSignature = await openpgp.sign({
           message,
           signingKeys: privateKey,
           detached : true
@@ -87,111 +87,47 @@
        })();
     });
 
-        const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(
-      75,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      1000
-    );
-
-    const renderer = new THREE.WebGLRenderer();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    //renderer.setAnimationLoop(animate);
-    document.body.appendChild(renderer.domElement);
-
     // Rendering of 3D
-    /*
-    import * as THREE from "three";
-
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(
+    var graphics = {};
+    graphics.scene = new THREE.Scene();
+    graphics.camera = new THREE.PerspectiveCamera(
       75,
       window.innerWidth / window.innerHeight,
       0.1,
       1000
     );
+    graphics.camera.position.z = 5;
+    graphics.renderer = new THREE.WebGLRenderer();
+    graphics.renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(graphics.renderer.domElement);
+    graphics.animate = function () {
+      graphics.renderer.render(graphics.scene, graphics.camera);
+    }
+    graphics.renderer.setAnimationLoop(graphics.animate);
 
-    const renderer = new THREE.WebGLRenderer();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setAnimationLoop(animate);
-    document.body.appendChild(renderer.domElement);
-
+    // Information about guests(avatars which on the party)
     var guests = {};
-    guests.geometries = [];
-    guests.materials = [];
-    guests.cubes = [];
-    guests.data = [];
-    guests.data_old = [];
-    guests.get_data = async function () {
-      const url = location.protocol + "//" + location.host + "/data";
+        guests.data      = [];
+        guests.data_prev = [];
+    // Models of avatars
+    var models = {};
+        models.geometries = {};
+        models.materials  = {};
+        models.cubes   = {};
+        models.objects = [];
+
+    guests.get = async function () {
+      // Fetching from server information about existence of guests
+      let url_get = location.protocol + "//" + location.host + "/guests_get";
       try {
-        const response = await fetch(url);
+        let response = await fetch(url_get);
         if (!response.ok) {
           throw new Error(`Response status: ${response.status}`);
         }
         guests.data = await response.json();
-        guests.build();
         console.log("guests.data: ", guests.data);
-      } catch (error) {
-        console.error(error.message);
-      }
-    };
-    guests.get_data();
-
-    guests.build = function () {
-      guests.geometries = [];
-      guests.materials = [];
-      for (let i = 0; i < guests.cubes; i++) {
-        scene.remove(guests.cubes[i]);
-      }
-      for (let i = 0; i < guests.data.length; i++) {
-        guests.geometries[i] = new THREE.BoxGeometry(1, 1, 1);
-        switch (guests.data[i].avatar) {
-          case "human":
-            guests.materials[i] = new THREE.MeshBasicMaterial({
-              color: 0xff0000,
-            });
-            break;
-          case "robot":
-            guests.materials[i] = new THREE.MeshBasicMaterial({
-              color: 0x00ff00,
-            });
-            break;
-          case "sceleton":
-            guests.materials[i] = new THREE.MeshBasicMaterial({
-              color: 0x0000ff,
-            });
-            break;
-          case "zombie":
-            guests.materials[i] = new THREE.MeshBasicMaterial({
-              color: 0xffff00,
-            });
-            break;
-          case "ghost":
-            guests.materials[i] = new THREE.MeshBasicMaterial({
-              color: 0xff00ff,
-            });
-            break;
-        }
-        guests.cubes[i] = new THREE.Mesh(
-          guests.geometries[i],
-          guests.materials[i]
-        );
-        guests.cubes[i].position.x = i * 2;
-        scene.add(guests.cubes[i]);
-      }
-    };
-    guests.data_check = async function () {
-      const url = location.protocol + "//" + location.host + "/data";
-      try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error(`Response status: ${response.status}`);
-        }
-        let answer = await response.json();
-        guests.data = answer.guests;
-        if (JSON.stringify(guests.data_old) === JSON.stringify(guests.data)) {
+        // Exist changes in the guests?
+        if (JSON.stringify(guests.data_prev) === JSON.stringify(guests.data)) {
           return false;
         } else {
           guests.data_old = guests.data;
@@ -201,17 +137,51 @@
         console.error(error.message);
       }
     };
-    let check = guests.data_check();
-    guests.data_interval = setInterval(() => {
-      check = guests.data_check();
-      if (check) guests.build();
+
+    // Load models for each type of avatar
+    let models_dict = ["human", "robot", "sceleton", "zombie", "ghost"];
+    for (let i = 0; i < models_dict.length; i++) {
+       models.geometries[models_dict[i]] = new THREE.BoxGeometry(1, 1, 1);
+       switch (models_dict[i]) {
+          case "human"   : models.materials[models_dict[i]] = new THREE.MeshBasicMaterial({color: 0xff0000,}); break;
+          case "robot"   : models.materials[models_dict[i]] = new THREE.MeshBasicMaterial({color: 0x00ff00,}); break;
+          case "sceleton": models.materials[models_dict[i]] = new THREE.MeshBasicMaterial({color: 0x0000ff,}); break;
+          case "zombie"  : models.materials[models_dict[i]] = new THREE.MeshBasicMaterial({color: 0xffff00,}); break;
+          case "ghost"   : models.materials[models_dict[i]] = new THREE.MeshBasicMaterial({color: 0xff00ff,}); break;
+       }
+       models.cubes[models_dict[i]] =  new THREE.Mesh(
+                                          models.geometries[models_dict[i]],
+                                          models.materials[models_dict[i]]
+                                       );
+    }
+
+    models.build = function () {
+      // Delete old models from scene and add again with new information
+      for (let i = 0; i < models.objects.length; i++) {
+        graphics.scene.remove(models.objects[i]);
+      }
+      for (let i = 0; i < guests.data.length; i++) {
+        let model;
+        switch (guests.data[i].avatar) {
+          case "human"    :  models.objects[i] = models.cubes.human.clone();    break;
+          case "robot"    :  models.objects[i] = models.cubes.robot.clone();    break;
+          case "sceleton" :  models.objects[i] = models.cubes.sceleton.clone(); break;
+          case "zombie"   :  models.objects[i] = models.cubes.zombie.clone();   break;
+          case "ghost"    :  models.objects[i] = models.cubes.ghost.clone();    break;
+        }
+        models.objects[i].position.x = i * 2 - 4;
+        graphics.scene.add(models.objects[i]);
+      }
+    }
+
+    // Refresh information about guests each 1 sec and if needed build 3D models
+    guests.interval = setInterval ( ()=> {
+      let check = guests.get();
+      if (check) models.build();
     }, 1000);
 
-    camera.position.z = 5;
 
-    function animate() {
-      renderer.render(scene, camera);
-    }
+    /*
 
     let params = new URLSearchParams(window.location.search);
     let nickname = params.get("nickname");
