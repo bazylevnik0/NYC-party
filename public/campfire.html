@@ -27,19 +27,23 @@
     // Parse nickname, avatar, id from URL
     let params = new URLSearchParams(window.location.search);
     var guest = {};
-        guest.nickname = params.get("nickname");
-        guest.avatar   = params.get("avatar");
-        guest.id       = params.get("id");
+        guest.nickname   = params.get("nickname");
+        guest.avatar     = params.get("avatar");
+        guest.id         = params.get("id");
+        guest.passphrase = Math.random();
+
     // Generate keys, store keys, and register public key with guest information
     (async () => {
     const { privateKey, publicKey } = await openpgp.generateKey({
         type: 'rsa',
         rsaBits: 4096,
-        userIDs: [{ nickname: guest.nickname, avatar: guest.avatar, id: guest.id }]
+        userIDs: [{ nickname: guest.nickname, avatar: guest.avatar, id: guest.id }],
+        passphrase: guest.passphrase,
     });
-    console.log(publicKey);
+    console.log( "My public key: ", publicKey);
     guest.public_key  = publicKey;
     guest.private_key = privateKey;
+
     let url_register =
         location.protocol +
         "//" +
