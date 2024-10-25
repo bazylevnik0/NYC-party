@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Enter</title>
+    <style>
+      body {
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <form action="/join" method="post">
+      <label for="nickname">Enter nickname: </label>
+      <input
+        id="nickname"
+        type="text"
+        name="nickname"
+        value="anonimous" />
+      <br>
+      <label for="avatar">Choose avatar:</label>
+      <select name="avatar" id="avatar">
+        <option value="human">human</option>
+        <option value="robot">robot</option>
+        <option value="sceleton">sceleton</option>
+        <option value="zombie">zombie</option>
+        <option value="ghost">ghost</option>
+      </select>
+      <br>
+      <input type="submit" value="JOIN" />
+    </form>
+  </body>
+</html>

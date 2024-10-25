@@ -18,5 +18,8 @@
   "license": "CC-BY-4.0",
   "dependencies": {
     "express": "^4.21.1"
+  },
+  "devDependencies": {
+    "openpgp": "^5.11.2"
   }
 }

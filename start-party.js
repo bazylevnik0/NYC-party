@@ -3,22 +3,52 @@ const bodyParser = require('body-parser')
 const app = express();
 const port = 3000;
 const path = require("path");
-const op = {
+const root = {
   root: path.join(__dirname),
 };
 
 app.use(express.static("public"));
-// support parsing of application/json type post data
 app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.listen(port, () => {
+  console.log(`Party started on port: ${port}`);
+});
+
+var guests  = [];
+var phrases = [];
+class Guest {
+  constructor(nickname, avatar, id) {
+    this.nickname = nickname;
+    this.avatar = avatar;
+    this.id = id;
+  }
+}
 
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  console.log( "GET: /");
+  res.sendFile("/public/enter.html", root);
 });
 
-app.get("/enter", (req, res) => {
-  res.sendFile("/public/pages/join.html", op);
+app.post("/join", (req, res) => {
+  console.log("POST: /join, nickname: ", req.body.nickname);
+  console.log("POST: /join, avatar: "  , req.body.avatar);
+  res.redirect('/campfire?nickname='+req.body.nickname+'&avatar='+req.body.avatar+'&id='+Math.random());
 });
 
+app.get("/campfire", (req, res) => {
+  let guest = new Guest(req.query.nickname, req.query.avatar, req.query.id);
+  res.sendFile("/public/campfire.html", root);
+});
+
+app.post("/register", (req, res) => {
+  console.log("POST: /register, nickname: "     , req.body.nickname);
+  console.log("POST: /register, avatar: "       , req.body.avatar);
+  console.log("POST: /register, id: "           , req.body.id);
+  console.log("POST: /public_key, public_key: " , req.body.public_key);
+});
+
+/*
 app.get("/exit", (req, res) => {
   let guest = new Guest(req.query.nickname, req.query.avatar);
   let check = false;
@@ -27,26 +57,19 @@ app.get("/exit", (req, res) => {
       guests.splice(i, 1);
     }
   }
-  res.sendFile("/public/pages/join.html", op);
+  res.sendFile("/public/pages/join.html", root);
   console.log(guests);
 });
 
-app.get("/campfire", (req, res) => {
-  let guest = new Guest(req.query.nickname, req.query.avatar);
-  let check = false;
-  for (let i = 0; i < guests.length; i++) {
-    if (guest.nickname === guests[i].nickname) {
-      check = true;
-    }
+
+var phrases = [];
+var phrases_interval = setInterval(() => {
+  if (phrases[0] && !phrases[0].activated) {
+    setTimeout(() => {
+      phrases.shift();
+    }, phrases[0].time);
   }
-  if (!check) guests.push(guest);
-  res.sendFile("/public/pages/campfire.html", op);
-  console.log(guests);
-});
-
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
-});
+}, 1000);
 
 var guests = [];
 class Guest {
@@ -55,19 +78,15 @@ class Guest {
     this.avatar = avatar;
   }
 }
-var phrases = [];
-/*
-var phrases_interval = setInterval(() => {
-  if (phrases[0] && !phrases[0].activated) {
-    setTimeout(() => {
-      phrases.shift();
-    }, phrases[0].time);
+app.get("/data_get", (req, res) => {
+  switch (req.query.get) {
+    case "guests"  :
+      res.json(guests);
+      break;
+    case "phrases" :
+      res.json(phrases);
+      break;
   }
-}, 1000);
-*/
-
-app.get("/data", (req, res) => {
-  res.json(guests);
 });
 
 app.post("/say", (req, res) => {
@@ -79,3 +98,4 @@ app.post("/say", (req, res) => {
   });
   console.log(phrases);
 });
+*/
