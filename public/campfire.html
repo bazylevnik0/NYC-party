@@ -60,6 +60,39 @@
     }));
     })();
 
+    // Controls
+    let button_exit = document.getElementById("exit");
+    button_exit.addEventListener("click", () => {
+      (async () => {
+        const publicKeyArmored = guest.public_key;
+        const privateKeyArmored = guest.private_key;
+
+        const publicKey  = await openpgp.readKey({ armoredKey: publicKeyArmored });
+        const privateKey = await openpgp.readPrivateKey({ armoredKey: privateKeyArmored });
+
+        const message = await openpgp.createMessage({ text: 'exit' });
+        const detachedSignature = await openpgp.sign({
+          message,
+          signingKeys: privateKey,
+          detached : true
+        });
+
+        let url_exit =
+            location.protocol +
+            "//" +
+            location.host +
+            "/exit";
+        let xml_exit = new XMLHttpRequest();
+        xml_exit.open("POST", url_exit);
+        xml_exit.setRequestHeader('Content-Type', 'application/json;charset=UTF-8')
+        xml_exit.send(JSON.stringify({
+                id: guest.id,
+                message: JSON.stringify(detachedSignature)
+        }));
+
+        window.location = location.protocol + "//" + location.host;
+       })();
+    });
     /*
     import * as THREE from "three";
 

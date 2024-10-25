@@ -1,5 +1,7 @@
 const express = require("express");
 const bodyParser = require('body-parser')
+const openpgp = require('openpgp');
+
 const app = express();
 const port = 3000;
 const path = require("path");
@@ -51,20 +53,46 @@ app.post("/register", (req, res) => {
   console.log("/POST /register, guests: ", guests);
 });
 
-/*
-app.get("/exit", (req, res) => {
-  let guest = new Guest(req.query.nickname, req.query.avatar);
-  let check = false;
+app.post("/exit", (req, res) => {
+  console.log("POST: /exit, id: "     ,req.body.id);
+  console.log("POST: /exit, message: ", req.body.message);
+  let id = req.body.id;
+  let detachedSignature = JSON.parse(req.body.message);
+  (async () => {
+  let guestId = id;
+  let guestPublicKey;
+  let guest_number = 0;
   for (let i = 0; i < guests.length; i++) {
-    if (guest.nickname === guests[i].nickname) {
-      guests.splice(i, 1);
+    if (guestId == guests[i].id) {
+      guestPublicKey = guests[i].public_key;
+      guest_number = i;
     }
   }
-  res.sendFile("/public/pages/join.html", root);
-  console.log(guests);
+  if (guestPublicKey) {
+    const message = await openpgp.createMessage({ text: 'exit' });
+    const signature = await openpgp.readSignature({
+        armoredSignature: detachedSignature // parse detached signature
+    });
+    const publicKey = await openpgp.readKey({ armoredKey: guestPublicKey });
+    const verificationResult = await openpgp.verify({
+        message,
+        signature,
+        verificationKeys: publicKey
+    })
+    const { verified, keyID } = verificationResult.signatures[0];
+    try {
+        await verified; // throws on invalid signature
+        console.log('Signed by key id ' + keyID.toHex());
+        guests.splice(guest_number,1);
+        console.log(guests);
+    } catch (e) {
+        throw new Error('Signature could not be verified: ' + e.message);
+    }
+  }
+  })();
 });
 
-
+/*
 var phrases = [];
 var phrases_interval = setInterval(() => {
   if (phrases[0] && !phrases[0].activated) {
@@ -102,3 +130,4 @@ app.post("/say", (req, res) => {
   console.log(phrases);
 });
 */
+
