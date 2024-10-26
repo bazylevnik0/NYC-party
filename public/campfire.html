@@ -14,6 +14,7 @@
     <button id="audiorecord">record</button>
     <button id="audiostop">stop</button>
   </body>
+  <script src="/socket.io.js"></script>
   <script src="/openpgp.js"></script>
   <script type="module">
     import * as THREE from "/three.module.js";
@@ -181,6 +182,8 @@
 
 
     // Streaming of audio record (microphon)
+var socket = io();
+
     let button_record = document.getElementById("audiorecord");
     let button_stop = document.getElementById("audiostop");
 
@@ -203,17 +206,7 @@
             (async () => {
             const blob = new Blob([stream.data], { type: "audio/ogg; codecs=opus" });
             const buffer = await blob.arrayBuffer();
-             let url =
-              location.protocol +
-              "//" +
-              location.host +
-              "/phrases_push";
-            let xmlHttp = new XMLHttpRequest();
-            xmlHttp.open("POST", url);
-            xmlHttp.setRequestHeader('Content-Type', 'application/json;charset=UTF-8')
-            xmlHttp.send(JSON.stringify({
-                                data: Array.from(new Uint8Array(buffer)),
-                                }));
+            socket.emit('stream_audio', JSON.stringify(Array.from(new Uint8Array(buffer))));
             })();
           });
           button_record.addEventListener("click", () => {
@@ -235,5 +228,9 @@
       console.log("getUserMedia not supported on your browser!");
     }
 
+
+  socket.on('stream_audio', function(data) {
+    console.log(data)
+  });
   </script>
 </html>

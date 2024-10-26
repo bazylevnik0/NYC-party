@@ -1,22 +1,28 @@
 const express = require("express");
 const bodyParser = require('body-parser')
-const openpgp = require('openpgp');
-
 const app = express();
 const port = 3000;
 const path = require("path");
 const root = {
   root: path.join(__dirname),
 };
+
+const http = require('http');
+const server = http.createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(server);
+
+const openpgp = require('openpgp');
 var passphrase = "42"; //default
 if (process.argv[2]) passphrase = ""+process.argv[2]
+
 
 app.use(express.static("public"));
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.listen(port, () => {
-  console.log(`Party started on port: ${port}`);
+server.listen(3000, () => {
+  console.log('party started on port: ' + port);
 });
 
 var guests  = [];
@@ -97,8 +103,13 @@ app.get("/guests_get", (req, res) => {
     res.json(guests);
 });
 
-app.post("/phrases_push", (req, res) => {
-  phrases.push(req.body.data);
-  console.log(phrases.length);
+io.on('connection', (socket) => {
+  console.log('a guest connected to socket');
+   socket.broadcast.emit('hi');
+
+  socket.on('stream_audio', (data) => {
+    console.log(data)
+    io.emit('stream_audio', data);
+  });
 });
 
