@@ -102,8 +102,6 @@ app.get("/guests_get", (req, res) => {
 
 io.on('connection', (socket) => {
   console.log('a guest connected to socket');
-   socket.broadcast.emit('hi');
-
   socket.on('stream_audio', (data) => {
     io.emit('broadcast_audio', data);
   });
