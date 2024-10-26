@@ -187,7 +187,7 @@ var socket = io();
     let button_record = document.getElementById("audiorecord");
     let button_stop = document.getElementById("audiostop");
 
-    var mediaRecorder;
+    var mediaRecorder; let chunkes = [];
     // Ask permission
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       console.log("getUserMedia supported.");
@@ -202,21 +202,23 @@ var socket = io();
         .then((stream) => {
           mediaRecorder = new MediaRecorder(stream);
           mediaRecorder.addEventListener("dataavailable", (stream) => {
-          // Convert the stream data to array and send to server while mediarecorder is active
-            (async () => {
-            const blob = new Blob([stream.data], { type: "audio/ogg; codecs=opus" });
-            const buffer = await blob.arrayBuffer();
-            socket.emit('stream_audio', JSON.stringify(Array.from(new Uint8Array(buffer))));
-            })();
+            // Temporary store chunks
+            chunks.push(stream.data);
           });
           button_record.addEventListener("click", () => {
              // Set mediarecorder - active
-                           mediaRecorder.start();
+             mediaRecorder.start();
           });
 
           button_stop.addEventListener("click", () => {
-             // Set mediarecorder - inactive
-             mediaRecorder.stop();
+            // Convert the stream data to array and send to server
+            (async () => {
+            const blob = new Blob(chunks, { type: "audio/ogg; codecs=opus" });
+            const buffer = await blob.arrayBuffer();
+            socket.emit('stream_audio', JSON.stringify(Array.from(new Uint8Array(buffer))));
+            })();
+            // Set mediarecorder - inactive
+            mediaRecorder.stop();
           });
         })
 
