@@ -96,33 +96,9 @@ app.post("/exit", (req, res) => {
 app.get("/guests_get", (req, res) => {
     res.json(guests);
 });
-/*
-var phrases = [];
-var phrases_interval = setInterval(() => {
-  if (phrases[0] && !phrases[0].activated) {
-    setTimeout(() => {
-      phrases.shift();
-    }, phrases[0].time);
-  }
-}, 1000);
 
-var guests = [];
-class Guest {
-  constructor(nickname, avatar) {
-    this.nickname = nickname;
-    this.avatar = avatar;
-  }
-}
-
-
-app.post("/say", (req, res) => {
-  console.log("test");
-  phrases.push({
-    data: req.body.data,
-    time: req.body.time,
-    activated: false,
-  });
-  console.log(phrases);
+app.post("/phrases_push", (req, res) => {
+  phrases.push(req.body.data);
+  console.log(phrases.length);
 });
-*/
 

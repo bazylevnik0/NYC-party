@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>My first three.js app</title>
+    <title>campfire</title>
     <style>
       body {
         margin: 0;
@@ -125,7 +125,6 @@
           throw new Error(`Response status: ${response.status}`);
         }
         guests.data = await response.json();
-        console.log("guests.data: ", guests.data);
         // Exist changes in the guests?
         if (JSON.stringify(guests.data_prev) === JSON.stringify(guests.data)) {
           return false;
@@ -181,37 +180,50 @@
     }, 1000);
 
 
-    /*
-
-    let params = new URLSearchParams(window.location.search);
-    let nickname = params.get("nickname");
-    let avatar = params.get("avatar");
-    console.log(nickname, avatar);
-
-    let button_exit = document.getElementById("exit");
-    button_exit.addEventListener("click", () => {
-      window.location =
-        location.protocol + "//" + location.host + "/exit?nickname=" + nickname;
-    });
-
+    // Streaming of audio record (microphon)
     let button_record = document.getElementById("audiorecord");
     let button_stop = document.getElementById("audiostop");
+
     var mediaRecorder;
+    // Ask permission
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       console.log("getUserMedia supported.");
       navigator.mediaDevices
         .getUserMedia(
-          // constraints - only audio needed for this app
-          {
+           {
             audio: true,
           }
         )
 
-        // Success callback
+        // If success
         .then((stream) => {
           mediaRecorder = new MediaRecorder(stream);
-          mediaRecorder.addEventListener("dataavailable", (event) => {
-            chunks.push(event.data);
+          mediaRecorder.addEventListener("dataavailable", (stream) => {
+          // Convert the stream data to array and send to server while mediarecorder is active
+            (async () => {
+            const blob = new Blob([stream.data], { type: "audio/ogg; codecs=opus" });
+            const buffer = await blob.arrayBuffer();
+             let url =
+              location.protocol +
+              "//" +
+              location.host +
+              "/phrases_push";
+            let xmlHttp = new XMLHttpRequest();
+            xmlHttp.open("POST", url);
+            xmlHttp.setRequestHeader('Content-Type', 'application/json;charset=UTF-8')
+            xmlHttp.send(JSON.stringify({
+                                data: Array.from(new Uint8Array(buffer)),
+                                }));
+            })();
+          });
+          button_record.addEventListener("click", () => {
+             // Set mediarecorder - active
+             mediaRecorder.start(1000);
+          });
+
+          button_stop.addEventListener("click", () => {
+             // Set mediarecorder - inactive
+             mediaRecorder.stop();
           });
         })
 
@@ -223,49 +235,5 @@
       console.log("getUserMedia not supported on your browser!");
     }
 
-    let chunks = [];
-    let time = 1;
-    let time_interval;
-    button_record.addEventListener("click", () => {
-      console.log("record");
-
-      //chunks = [];
-      time = 1;
-      mediaRecorder.start(100);
-      console.log(mediaRecorder.state);
-      console.log("recorder started");
-      time_interval = setInterval(() => {
-        time++;
-      }, 1000);
-    });
-    button_stop.addEventListener("click", () => {
-      console.log("stop");
-      mediaRecorder.stop();
-      //need blob converter
-      guests.say();
-      clearInterval(time_interval);
-      console.log(mediaRecorder.state);
-      console.log("recorder stopped");
-    });
-    guests.say = async function () {
-      const blob = new Blob(chunks, { type: "audio/ogg; codecs=opus" });
-      const buffer = await blob.arrayBuffer();
-      //need to shape body of request or change the type!
-       let url =
-        location.protocol +
-        "//" +
-        location.host +
-        "/say";
-      console.log(url);
-      let xmlHttp = new XMLHttpRequest();
-      xmlHttp.open("POST", url, false); // false for synchronous request
-      xmlHttp.setRequestHeader('Content-Type', 'application/json;charset=UTF-8')
-      xmlHttp.send(JSON.stringify({
-                          data: JSON.stringify(Array.from(new Uint8Array(buffer))),
-                          time: JSON.stringify(time),
-                          }));
-    };
-    guests.get_data();
-    */
   </script>
 </html>
