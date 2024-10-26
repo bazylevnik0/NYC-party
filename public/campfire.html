@@ -211,7 +211,7 @@ var socket = io();
           });
           button_record.addEventListener("click", () => {
              // Set mediarecorder - active
-             mediaRecorder.start(1000);
+                           mediaRecorder.start();
           });
 
           button_stop.addEventListener("click", () => {
@@ -228,8 +228,12 @@ var socket = io();
       console.log("getUserMedia not supported on your browser!");
     }
 
-
   socket.on('stream_audio', function(data) {
+    let blob = new Blob([new Uint8Array(JSON.parse(data)).buffer], { type: "audio/ogg; codecs=opus" });
+    var url = URL.createObjectURL( blob );
+    var audio = new Audio();
+    audio.src = url;
+    audio.play();
     console.log(data)
   });
   </script>
