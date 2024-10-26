@@ -202,7 +202,7 @@ var socket = io();
         .then((stream) => {
           mediaRecorder = new MediaRecorder(stream);
           mediaRecorder.addEventListener("dataavailable", (stream) => {
-            // Temporary store chunks
+            // Temporary store chunks while mediaRecorder is active
             chunks.push(stream.data);
           });
           button_record.addEventListener("click", () => {
@@ -211,17 +211,21 @@ var socket = io();
           });
 
           button_stop.addEventListener("click", () => {
-            // Convert the stream data to array and send to server
             (async () => {
-            mediaRecorder.stop();
-            const blob = new Blob(chunks, { type: "audio/ogg; codecs=opus" });
-            const buffer = await blob.arrayBuffer();
-            socket.emit('stream_audio', JSON.stringify(Array.from(new Uint8Array(buffer))));
-                           chunks = [];
-
+              // Set mediarecorder - inactive
+              mediaRecorder.stop();
+              // Convert the stream data to array and send to server
+              let blob = new Blob(chunks, { type: "audio/ogg; codecs=opus" });
+              let buffer = await blob.arrayBuffer();
+              let message =  await openpgp.createMessage({binary: new Uint8Array(buffer)});
+              let encrypted = await openpgp.encrypt({
+                  message,
+                  passwords: ['42'],
+                  format: 'binary'
+              });
+              socket.emit('stream_audio',JSON.stringify(encrypted));
+              chunks = [];
             })();
-            // Set mediarecorder - inactive
-
           });
         })
 
@@ -234,12 +238,22 @@ var socket = io();
     }
 
   socket.on('stream_audio', function(data) {
-    let blob = new Blob([new Uint8Array(JSON.parse(data)).buffer], { type: "audio/ogg; codecs=opus" });
-    var url = URL.createObjectURL( blob );
+    (async () => {
+    const encryptedMessage = await openpgp.readMessage({
+        binaryMessage: new Uint8Array(Object.values(JSON.parse(data)))
+    });
+    const decrypted  = await openpgp.decrypt({
+        message: encryptedMessage,
+        passwords: ['42'],
+        format: 'binary'
+    });
+    console.log(decrypted.data,decrypted.data.buffer)
+    let blob = new Blob([new Uint8Array(decrypted.data).buffer], { type: "audio/ogg; codecs=opus" });
+    var url = await URL.createObjectURL( blob );
     var audio = new Audio();
     audio.src = url;
     audio.play();
-    console.log(data)
+    })();
   });
   </script>
 </html>
