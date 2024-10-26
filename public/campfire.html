@@ -247,7 +247,7 @@
           passwords: [input_passphrase.value],
           format: 'binary'
       });
-      // Play Audio
+      // Play audio message
       let blob = new Blob([new Uint8Array(decrypted.data).buffer], { type: "audio/ogg; codecs=opus" });
       var url = await URL.createObjectURL( blob );
       var audio = new Audio();

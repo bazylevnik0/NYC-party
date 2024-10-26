@@ -13,9 +13,6 @@ const { Server } = require("socket.io");
 const io = new Server(server);
 
 const openpgp = require('openpgp');
-var passphrase = "42"; //default
-if (process.argv[2]) passphrase = ""+process.argv[2]
-
 
 app.use(express.static("public"));
 app.use(bodyParser.json());
