@@ -13,6 +13,7 @@
     <button id="exit">EXIT</button>
     <button id="audiorecord">record</button>
     <button id="audiostop">stop</button>
+    <input  id="passphrase" value="42"></input>
   </body>
   <script src="/socket.io.js"></script>
   <script src="/openpgp.js"></script>
@@ -182,15 +183,14 @@
 
 
     // Streaming of audio record (microphon)
-var socket = io();
-
     let button_record = document.getElementById("audiorecord");
     let button_stop = document.getElementById("audiostop");
+    let input_passphrase = document.getElementById("passphrase");
 
+    var socket = io();
     var mediaRecorder; let chunks = [];
     // Ask permission
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      console.log("getUserMedia supported.");
       navigator.mediaDevices
         .getUserMedia(
            {
@@ -214,13 +214,13 @@ var socket = io();
             (async () => {
               // Set mediarecorder - inactive
               mediaRecorder.stop();
-              // Convert the stream data to array and send to server
+              // Convert the stream data to array and send to server with encryption
               let blob = new Blob(chunks, { type: "audio/ogg; codecs=opus" });
               let buffer = await blob.arrayBuffer();
               let message =  await openpgp.createMessage({binary: new Uint8Array(buffer)});
               let encrypted = await openpgp.encrypt({
                   message,
-                  passwords: ['42'],
+                  passwords: [input_passphrase.value],
                   format: 'binary'
               });
               socket.emit('stream_audio',JSON.stringify(encrypted));
@@ -228,8 +228,6 @@ var socket = io();
             })();
           });
         })
-
-        // Error callback
         .catch((err) => {
           console.error(`The following getUserMedia error occurred: ${err}`);
         });
@@ -237,22 +235,24 @@ var socket = io();
       console.log("getUserMedia not supported on your browser!");
     }
 
+  // Listen socket broadcast
   socket.on('stream_audio', function(data) {
     (async () => {
-    const encryptedMessage = await openpgp.readMessage({
-        binaryMessage: new Uint8Array(Object.values(JSON.parse(data)))
-    });
-    const decrypted  = await openpgp.decrypt({
-        message: encryptedMessage,
-        passwords: ['42'],
-        format: 'binary'
-    });
-    console.log(decrypted.data,decrypted.data.buffer)
-    let blob = new Blob([new Uint8Array(decrypted.data).buffer], { type: "audio/ogg; codecs=opus" });
-    var url = await URL.createObjectURL( blob );
-    var audio = new Audio();
-    audio.src = url;
-    audio.play();
+      // Decrypt message
+      const encryptedMessage = await openpgp.readMessage({
+          binaryMessage: new Uint8Array(Object.values(JSON.parse(data)))
+      });
+      const decrypted  = await openpgp.decrypt({
+          message: encryptedMessage,
+          passwords: [input_passphrase.value],
+          format: 'binary'
+      });
+      // Play Audio
+      let blob = new Blob([new Uint8Array(decrypted.data).buffer], { type: "audio/ogg; codecs=opus" });
+      var url = await URL.createObjectURL( blob );
+      var audio = new Audio();
+      audio.src = url;
+      audio.play();
     })();
   });
   </script>
