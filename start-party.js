@@ -105,7 +105,7 @@ io.on('connection', (socket) => {
    socket.broadcast.emit('hi');
 
   socket.on('stream_audio', (data) => {
-    io.emit('stream_audio', data);
+    io.emit('broadcast_audio', data);
   });
 });
 

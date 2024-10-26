@@ -218,12 +218,13 @@
               let blob = new Blob(chunks, { type: "audio/ogg; codecs=opus" });
               let buffer = await blob.arrayBuffer();
               let message =  await openpgp.createMessage({binary: new Uint8Array(buffer)});
-              let encrypted = await openpgp.encrypt({
+              openpgp.encrypt({
                   message,
                   passwords: [input_passphrase.value],
                   format: 'binary'
+              }).then ( (encrypted)=> {
+                 socket.emit('stream_audio',JSON.stringify(encrypted));
               });
-              socket.emit('stream_audio',JSON.stringify(encrypted));
               chunks = [];
             })();
           });
@@ -236,7 +237,7 @@
     }
 
   // Listen socket broadcast
-  socket.on('stream_audio', function(data) {
+  socket.on('broadcast_audio', function(data) {
     (async () => {
       // Decrypt message
       const encryptedMessage = await openpgp.readMessage({
