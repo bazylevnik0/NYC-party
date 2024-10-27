@@ -6,8 +6,17 @@
     <style>
       body {
         margin: 0;
+        overflow: hidden;
       }
     </style>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@v0.149.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@v0.149.0/examples/jsm/"
+        }
+      }
+    </script>
   </head>
   <body>
     <button id="exit">EXIT</button>
@@ -17,8 +26,12 @@
   </body>
   <script src="/socket.io.js"></script>
   <script src="/openpgp.js"></script>
+
   <script type="module">
-    import * as THREE from "/three.module.js";
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 
     // Parse nickname, avatar, id from URL
     var guest = {};
@@ -98,9 +111,18 @@
       0.1,
       1000
     );
-    graphics.camera.position.z = 5;
+    graphics.camera.position.z = 15;
+    graphics.camera.position.y = 15;
+    graphics.camera.lookAt(new THREE.Vector3(0,0,15));
+
+    graphics.light_ambient = new THREE.AmbientLight( 0x404040, 0,5 );
+    graphics.scene.add( graphics.light_ambient );
+    graphics.light_point = new THREE.PointLight( 0xffffff, 0.5, 1000 );
+    graphics.light_point.position.set( 50, 50, 50 );
+    graphics.scene.add( graphics.light_point );
     graphics.renderer = new THREE.WebGLRenderer();
     graphics.renderer.setSize(window.innerWidth, window.innerHeight);
+    graphics.controls = new OrbitControls( graphics.camera, graphics.renderer.domElement );
     document.body.appendChild(graphics.renderer.domElement);
     graphics.animate = function () {
       graphics.renderer.render(graphics.scene, graphics.camera);
@@ -156,6 +178,8 @@
                                        );
     }
 
+
+
     models.build = function () {
       // Delete old models from scene and add again with new information
       for (let i = 0; i < models.objects.length; i++) {
@@ -171,9 +195,31 @@
           case "ghost"    :  models.objects[i] = models.cubes.ghost.clone();    break;
         }
         models.objects[i].position.x = i * 2 - 4;
+        models.objects[i].position.y = 11;
+
         graphics.scene.add(models.objects[i]);
       }
     }
+
+    models.sky = {};
+    models.sky.loader = new RGBELoader();
+	  models.sky.loader.load( '/images/sky.hdr', function ( texture ) {
+		    texture.mapping = THREE.EquirectangularReflectionMapping;
+		    graphics.scene.background = texture;
+		    graphics.scene.environment = texture;
+    });
+
+    models.city = {}
+    models.city.loader = new GLTFLoader();
+    	models.city.loader.load( '/models/campfire.glb', (gltf)=> {
+			models.city.model = gltf.scene;
+      models.city.model.position.x = -17.5;
+      models.city.model.position.z = 12;
+      graphics.scene.add(models.city.model);
+    });
+
+
+
 
     // Refresh information about guests each 1 sec and if needed build 3D models
     guests.interval = setInterval ( ()=> {
@@ -193,11 +239,10 @@
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       navigator.mediaDevices
         .getUserMedia(
-           {
+          {
             audio: true,
           }
         )
-
         // If success
         .then((stream) => {
           mediaRecorder = new MediaRecorder(stream);
@@ -205,6 +250,7 @@
             // Temporary store chunks while mediaRecorder is active
             chunks.push(stream.data);
           });
+
           button_record.addEventListener("click", () => {
              // Set mediarecorder - active
              mediaRecorder.start(100);
