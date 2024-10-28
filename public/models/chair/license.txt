@@ -1,0 +1,11 @@
+Model Information:
+* title:	Monobloc Plastic Garden Chair
+* source:	https://sketchfab.com/3d-models/monobloc-plastic-garden-chair-68089dce5fa1461981d690f1cfd657fa
+* author:	Kuutti Siitonen (https://sketchfab.com/kuuttisiitonen)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Monobloc Plastic Garden Chair" (https://sketchfab.com/3d-models/monobloc-plastic-garden-chair-68089dce5fa1461981d690f1cfd657fa) by Kuutti Siitonen (https://sketchfab.com/kuuttisiitonen) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

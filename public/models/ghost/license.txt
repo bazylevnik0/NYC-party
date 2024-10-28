@@ -1,0 +1,11 @@
+Model Information:
+* title:	Ghost Face Classic Game Model
+* source:	https://sketchfab.com/3d-models/ghost-face-classic-game-model-2981fc301db041728fd28c8918c81086
+* author:	Elite 3D (https://sketchfab.com/Elite3DModelling)
+
+Model License:
+* license type:	CC-BY-SA-4.0 (http://creativecommons.org/licenses/by-sa/4.0/)
+* requirements:	Author must be credited. Modified versions must have the same license. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Ghost Face Classic Game Model" (https://sketchfab.com/3d-models/ghost-face-classic-game-model-2981fc301db041728fd28c8918c81086) by Elite 3D (https://sketchfab.com/Elite3DModelling) licensed under CC-BY-SA-4.0 (http://creativecommons.org/licenses/by-sa/4.0/)
