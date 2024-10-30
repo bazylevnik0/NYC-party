@@ -30,8 +30,8 @@
   <script type="module">
     import * as THREE from 'three';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-    import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
+    import { GLTFLoader }    from 'three/addons/loaders/GLTFLoader.js';
+    import { RGBELoader }    from 'three/addons/loaders/RGBELoader.js';
 
     // Parse nickname, avatar, id from URL
     var guest = {};
@@ -111,9 +111,8 @@
       0.1,
       1000
     );
-    graphics.camera.position.z = 15;
-    graphics.camera.position.y = 15;
-    graphics.camera.lookAt(new THREE.Vector3(0,0,15));
+    graphics.camera.position.z = 10.55;
+    graphics.camera.position.y = 10.55;
 
     graphics.light_ambient = new THREE.AmbientLight( 0x404040, 0,5 );
     graphics.scene.add( graphics.light_ambient );
@@ -125,6 +124,7 @@
     graphics.controls = new OrbitControls( graphics.camera, graphics.renderer.domElement );
     document.body.appendChild(graphics.renderer.domElement);
     graphics.animate = function () {
+      graphics.camera.lookAt(new THREE.Vector3(0,10.55,0));
       graphics.renderer.render(graphics.scene, graphics.camera);
     }
 
@@ -161,13 +161,13 @@
     };
 
     // Load models for each type of avatar
-    let models_dict = [ "robot", "skeleton", "zombie"];
+    let models_dict = [ "skeleton_white", "skeleton_black", "skeleton_pink"];
     for (let i = 0; i < models_dict.length; i++) {
        models.geometries[models_dict[i]] = new THREE.BoxGeometry(1, 1, 1);
        switch (models_dict[i]) {
-          case "robot"   : models.materials[models_dict[i]] = new THREE.MeshBasicMaterial({color: 0x00ff00,}); break;
-          case "skeleton": models.materials[models_dict[i]] = new THREE.MeshBasicMaterial({color: 0x0000ff,}); break;
-          case "zombie"  : models.materials[models_dict[i]] = new THREE.MeshBasicMaterial({color: 0xffff00,}); break;
+          case "skeleton_white" : models.materials[models_dict[i]] = new THREE.MeshBasicMaterial({color: 0x00ff00,}); break;
+          case "skeleton_black" : models.materials[models_dict[i]] = new THREE.MeshBasicMaterial({color: 0x0000ff,}); break;
+          case "skeleton_pink"  : models.materials[models_dict[i]] = new THREE.MeshBasicMaterial({color: 0xffff00,}); break;
        }
        models.cubes[models_dict[i]] =  new THREE.Mesh(
                                           models.geometries[models_dict[i]],
@@ -185,12 +185,12 @@
       for (let i = 0; i < guests.data.length; i++) {
         let model;
         switch (guests.data[i].avatar) {
-          case "robot"    :  models.objects[i] = models.robot.model.clone();    break;
-          case "skeleton" :  models.objects[i] = models.skeleton.model.clone(); break;
-          case "zombie"   :  models.objects[i] = models.zombie.model.clone();   break;
+          case "skeleton_white" :  models.objects[i] = models.skeleton_white.model.clone();    break;
+          case "skeleton_black" :  models.objects[i] = models.skeleton_black.model.clone(); break;
+          case "skeleton_pink"  :  models.objects[i] = models.skeleton_pink.model.clone();   break;
         }
         models.objects[i].position.x = i * 2 - 4;
-        models.objects[i].position.y = 11;
+        models.objects[i].position.y = 10.55;
 
         graphics.scene.add(models.objects[i]);
       }
@@ -213,23 +213,23 @@
       graphics.scene.add(models.city.model);
     });
 
-    models.robot = {};
-    models.robot.loader = new GLTFLoader();
-    	models.robot.loader.load( '/models/robot/robot_on_chair.glb', (gltf)=> {
-		  models.robot.model = gltf.scene;
-      models.robot.loaded = true;
+    models.skeleton_white = {};
+    models.skeleton_white.loader = new GLTFLoader();
+    	models.skeleton_white.loader.load( '/models/skeleton_white/skeleton_white_on_chair.glb', (gltf)=> {
+		  models.skeleton_white.model = gltf.scene;
+      models.skeleton_white.loaded = true;
     });
-    models.skeleton = {};
-    models.skeleton.loader = new GLTFLoader();
-    	models.skeleton.loader.load( '/models/skeleton/skeleton_on_chair.glb', (gltf)=> {
-		  models.skeleton.model = gltf.scene;
-      models.skeleton.loaded = true;
+    models.skeleton_black = {};
+    models.skeleton_black.loader = new GLTFLoader();
+    	models.skeleton_black.loader.load( '/models/skeleton_black/skeleton_black_on_chair.glb', (gltf)=> {
+		  models.skeleton_black.model = gltf.scene;
+      models.skeleton_black.loaded = true;
     });
-    models.zombie = {};
-    models.zombie.loader = new GLTFLoader();
-    	models.zombie.loader.load( '/models/zombie/zombie_on_chair.glb', (gltf)=> {
-		  models.zombie.model = gltf.scene;
-      models.zombie.loaded = true;
+    models.skeleton_pink = {};
+    models.skeleton_pink.loader = new GLTFLoader();
+    	models.skeleton_pink.loader.load( '/models/skeleton_pink/skeleton_pink_on_chair.glb', (gltf)=> {
+		  models.skeleton_pink.model = gltf.scene;
+      models.skeleton_pink.loaded = true;
     });
 
 
@@ -319,9 +319,9 @@
   });
 
   var loading = setInterval ( ()=> {
-    if (models.skeleton.loaded &&
-        models.robot.loaded &&
-        models.zombie.loaded) {
+    if (models.skeleton_white.loaded &&
+        models.skeleton_black.loaded &&
+        models.skeleton_pink.loaded) {
         clearInterval(loading);
         graphics.renderer.setAnimationLoop(graphics.animate);
     }
