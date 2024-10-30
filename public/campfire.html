@@ -161,21 +161,20 @@
     };
 
     // Load models for each type of avatar
-    let models_dict = [ "skeleton_white", "skeleton_black", "skeleton_pink"];
+    let models_dict = [ "skeleton_white", "skeleton_black", "skeleton_pink", "skeleton_blue", "skeleton_green", "skeleton_yellow"];
     for (let i = 0; i < models_dict.length; i++) {
        models.geometries[models_dict[i]] = new THREE.BoxGeometry(1, 1, 1);
        switch (models_dict[i]) {
           case "skeleton_white" : models.materials[models_dict[i]] = new THREE.MeshBasicMaterial({color: 0x00ff00,}); break;
           case "skeleton_black" : models.materials[models_dict[i]] = new THREE.MeshBasicMaterial({color: 0x0000ff,}); break;
           case "skeleton_pink"  : models.materials[models_dict[i]] = new THREE.MeshBasicMaterial({color: 0xffff00,}); break;
+          case "skeleton_blue"  : models.materials[models_dict[i]] = new THREE.MeshBasicMaterial({color: 0xffff00,}); break;
        }
        models.cubes[models_dict[i]] =  new THREE.Mesh(
                                           models.geometries[models_dict[i]],
                                           models.materials[models_dict[i]]
                                        );
     }
-
-
 
     models.build = function () {
       // Delete old models from scene and add again with new information
@@ -185,9 +184,12 @@
       for (let i = 0; i < guests.data.length; i++) {
         let model;
         switch (guests.data[i].avatar) {
-          case "skeleton_white" :  models.objects[i] = models.skeleton_white.model.clone();    break;
-          case "skeleton_black" :  models.objects[i] = models.skeleton_black.model.clone(); break;
-          case "skeleton_pink"  :  models.objects[i] = models.skeleton_pink.model.clone();   break;
+          case "skeleton_white"   :  models.objects[i] = models.skeleton_white.model.clone();  break;
+          case "skeleton_black"   :  models.objects[i] = models.skeleton_black.model.clone();  break;
+          case "skeleton_pink"    :  models.objects[i] = models.skeleton_pink.model.clone();   break;
+          case "skeleton_blue"    :  models.objects[i] = models.skeleton_blue.model.clone();   break;
+          case "skeleton_green"   :  models.objects[i] = models.skeleton_green.model.clone();  break;
+          case "skeleton_yellow"  :  models.objects[i] = models.skeleton_yellow.model.clone(); break;
         }
         models.objects[i].position.x = i * 2 - 4;
         models.objects[i].position.y = 10.55;
@@ -213,33 +215,25 @@
       graphics.scene.add(models.city.model);
     });
 
-    models.skeleton_white = {};
-    models.skeleton_white.loader = new GLTFLoader();
-    	models.skeleton_white.loader.load( '/models/skeleton_white/skeleton_white_on_chair.glb', (gltf)=> {
-		  models.skeleton_white.model = gltf.scene;
-      models.skeleton_white.loaded = true;
-    });
-    models.skeleton_black = {};
-    models.skeleton_black.loader = new GLTFLoader();
-    	models.skeleton_black.loader.load( '/models/skeleton_black/skeleton_black_on_chair.glb', (gltf)=> {
-		  models.skeleton_black.model = gltf.scene;
-      models.skeleton_black.loaded = true;
-    });
-    models.skeleton_pink = {};
-    models.skeleton_pink.loader = new GLTFLoader();
-    	models.skeleton_pink.loader.load( '/models/skeleton_pink/skeleton_pink_on_chair.glb', (gltf)=> {
-		  models.skeleton_pink.model = gltf.scene;
-      models.skeleton_pink.loaded = true;
-    });
-
-
-
-
+    for (let i = 0; i < models_dict.length; i++) {
+         models[models_dict[i]] = {};
+         models[models_dict[i]].loader = new GLTFLoader();
+         models[models_dict[i]].loader.load( '/models/'+models_dict[i]+'/'+models_dict[i]+'_on_chair.glb', (gltf)=> {
+		       models[models_dict[i]].model = gltf.scene;
+           models[models_dict[i]].loaded = true;
+         });
+    }
 
     // Refresh information about guests each 1 sec and if needed build 3D models
     guests.interval = setInterval ( ()=> {
       let check = guests.get();
-      if (check) models.build();
+      if (check &&
+          models.skeleton_white.loaded &&
+          models.skeleton_black.loaded &&
+          models.skeleton_pink.loaded  &&
+          models.skeleton_blue.loaded  &&
+          models.skeleton_green.loaded &&
+          models.skeleton_yellow.loaded) models.build();
     }, 1000);
 
 
@@ -321,7 +315,8 @@
   var loading = setInterval ( ()=> {
     if (models.skeleton_white.loaded &&
         models.skeleton_black.loaded &&
-        models.skeleton_pink.loaded) {
+        models.skeleton_pink.loaded &&
+        models.skeleton_blue.loaded) {
         clearInterval(loading);
         graphics.renderer.setAnimationLoop(graphics.animate);
     }
