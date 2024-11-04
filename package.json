@@ -1,27 +1,20 @@
 {
   "name": "nyc-party",
+  "private": true,
   "version": "0.0.0",
-  "description": "3D chat",
-  "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "node start-party"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bazylevnik0/NYC-party"
-  },
-  "keywords": [
-    "WebGL",
-    "WebXR"
-  ],
-  "author": "bazylevnik0",
-  "license": "CC-BY-4.0",
-  "dependencies": {
-    "express": "^4.21.1",
-    "socket.io": "^4.8.1",
-    "three": "^0.169.0"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "devDependencies": {
-    "openpgp": "^5.11.2"
+    "vite": "^5.4.10"
+  },
+  "dependencies": {
+    "express": "^4.21.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "vite-express": "^0.19.0"
   }
 }
