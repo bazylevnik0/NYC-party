@@ -1,12 +1,20 @@
 {
   "name": "nyc-party",
-  "private": true,
+  "description": "mascarade chat",
+  "keywords": ["messenger","conference","chat","voice-chat","video-chat","3D-chat"],
+  "homepage": "https://github.com/bazylevnik0/NYC-party",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bazylevnik0/NYC-party"
+  },
+  "author": "bazylevnik0",
+  "email": "bazylevnik0@gmail.com",
+  "license": "CC-BY-4.0",
   "version": "0.0.0",
+  "funding": "https://gifts.worldwildlife.org/gift-center/one-time-donation",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "dev": "node start-party"
   },
   "devDependencies": {
     "vite": "^5.4.10"
