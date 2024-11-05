@@ -13,13 +13,13 @@ body {
 }
 #stream {
   background-color: red;
-  height: 60vh;
+  height: 80vh;
 }
 #chat {
   background-color: green;
-  height: 60vh;
+  height: 80vh;
 }
 #panel {
   background-color: blue;
-  height: 30vh;
+  height: 10vh;
 }
