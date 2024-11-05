@@ -1,7 +1,14 @@
 {
   "name": "nyc-party",
   "description": "mascarade chat",
-  "keywords": ["messenger","conference","chat","voice-chat","video-chat","3D-chat"],
+  "keywords": [
+    "messenger",
+    "conference",
+    "chat",
+    "voice-chat",
+    "video-chat",
+    "3D-chat"
+  ],
   "homepage": "https://github.com/bazylevnik0/NYC-party",
   "repository": {
     "type": "git",
@@ -20,6 +27,9 @@
     "vite": "^5.4.10"
   },
   "dependencies": {
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@mui/material": "^6.1.6",
     "express": "^4.21.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
