@@ -6,9 +6,16 @@ import { createRoot } from 'react-dom/client';
 import Box  from '@mui/material/Box';
 import Grid from '@mui/material/Grid2';
 
+import Chat from './Chat.jsx';
+
 const root = createRoot(document.getElementById('app'));
 root.render( <Box component="section">
 <Grid container>
+<Grid size={{xs: 12, md: 12}}>
+    <div id="panel"> 
+     panel
+    </div>
+   </Grid>
    <Grid size={{xs: 12, md: 8}}>
      <div id="stream">
       stream
@@ -16,12 +23,7 @@ root.render( <Box component="section">
    </Grid>
    <Grid size={{xs: 12, md: 4}}>
     <div id="chat">
-     chat
-    </div>
-   </Grid>
-   <Grid size={{xs: 12, md: 12}}>
-    <div id="panel"> 
-     panel
+      <Chat /> 
     </div>
    </Grid>
 </Grid>

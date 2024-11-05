@@ -18,8 +18,20 @@ body {
 #chat {
   background-color: green;
   height: 80vh;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 #panel {
   background-color: blue;
   height: 10vh;
+}
+
+.MuiList-root {
+  min-height: 77.6vh;
+} 
+.MuiPaper-root {
+  position: absolute;
+  z-index: 999;
+  bottom: 0;
+  width: 100%;
 }
