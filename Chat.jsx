@@ -14,21 +14,32 @@ import InputBase from '@mui/material/InputBase';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 
+var MESSAGES_STORE = 100;
+
 export default function Chat() {
+
+    var socket = io();
 
     const [message,  setMessage] = useState(" ")
     const [messages, setMessages] = useState([])
     function send () {
-        messages.push({
+        socket.emit('socket_chat',JSON.stringify({
             name: "0",
-            message: message,
-        })
-        setMessages([...messages]);
+            message: message
+        }));
+        //setMessages([...messages]);
     }
     function typing(e) {
         console.log(e.target.value)
         setMessage(e.target.value);
     }
+
+    socket.on('broadcast_chat', function(data) {
+        let new_messages = JSON.parse(data);
+        if (new_messages.length > MESSAGES_STORE) new_messages.splice(0,new_messages.length-MESSAGES_STORE); 
+        setMessages([...new_messages]);
+    })
+  
 
     return (<List sx={{ width: '100%', bgcolor: 'background.paper' }}>
         <Paper
