@@ -23,6 +23,6 @@ io.on('connection', (socket) => {
     io.emit('broadcast_chat', JSON.stringify(messages));
   });
   socket.on('socket_audio', (data) => {
-    io.emit('broadcast_audio', data);
+    socket.broadcast.emit('broadcast_audio', data);
   })
 });
