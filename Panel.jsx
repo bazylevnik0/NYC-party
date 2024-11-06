@@ -23,15 +23,13 @@ export default function Panel() {
                 // If success
                 .then((stream) => {
                     mediaRecorderAudio = new MediaRecorder(stream);
-                    mediaRecorderAudio.addEventListener("dataavailable", (stream) => {
+                    mediaRecorderAudio.addEventListener("dataavailable", async (stream) => {
                         // Send stream data while mediaRecorderAudio is active
-                        ( async ()=>{
-                            let blob = new Blob(stream.data, { type: "audio/ogg; codecs=opus" });
+                            let blob = new Blob([stream.data], { type: "audio/webm; codecs=opus" });
                             let buffer = await blob.arrayBuffer();
                             let data_to_send =  new Uint8Array(buffer);
                             console.log(data_to_send)
-                            socket.emit('socket_audio',JSON.stringify(stream.data))
-                        });
+                            socket.emit('socket_audio',JSON.stringify(data_to_send))
                     });
                     mediaRecorderAudio.start(100);
                 })
