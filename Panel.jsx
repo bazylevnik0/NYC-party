@@ -29,7 +29,6 @@ export default function Panel() {
                             let buffer = await blob.arrayBuffer();
                             let data_to_send =  new Uint8Array(buffer);
                             socket.emit('socket_audio',JSON.stringify(data_to_send))
-                            mediaRecorderAudio.requestData()
                     });
                     mediaRecorderAudio.start(1000);
                 })
