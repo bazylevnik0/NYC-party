@@ -6,14 +6,15 @@ import { createRoot } from 'react-dom/client';
 import Box  from '@mui/material/Box';
 import Grid from '@mui/material/Grid2';
 
-import Chat from './Chat.jsx';
+import Chat from  './Chat.jsx';
+import Panel from './Panel.jsx';
 
 const root = createRoot(document.getElementById('app'));
 root.render( <Box component="section">
 <Grid container>
 <Grid size={{xs: 12, md: 12}}>
     <div id="panel"> 
-     panel
+     <Panel />
     </div>
    </Grid>
    <Grid size={{xs: 12, md: 8}}>

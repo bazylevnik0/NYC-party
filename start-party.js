@@ -23,4 +23,7 @@ io.on('connection', (socket) => {
     console.log(messages);
     io.emit('broadcast_chat', JSON.stringify(messages));
   });
+  socket.on('socket_audio', (data) => {
+    console.log(JSON.parse(data));
+  })
 });
