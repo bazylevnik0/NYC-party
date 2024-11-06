@@ -40,16 +40,14 @@ export default function Panel() {
         }
     }
 
-    let sounds = []; let l = 0;
+    let sounds = [];
     socket.on('broadcast_audio', function(data) {
         (async () => {
-    
-          console.log(new Uint8Array(Object.values(JSON.parse(data))))
           let blob  = new Blob( [new Uint8Array(Object.values(JSON.parse(data))).buffer], { type: "audio/ogg; codecs=opus" });
           var url   = await URL.createObjectURL( blob );
-          sounds[l] = new Audio();
-          sounds[l].src = url;
-          sounds[l].play(); l++
+          let sound = new Audio();
+              sound.src = url;
+              sound.play();
         })();
        
     });
