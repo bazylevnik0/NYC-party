@@ -1,4 +1,5 @@
 import React from 'react';
+import { useState } from 'react';
 
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -14,18 +15,39 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 
 export default function Chat() {
-    let messages = [
-        {
-            name: "1",
-            message: "1231123 1241242153 254 sfas;fd; gds;g; pt43p ipokg; krlgk p53 g54 g54ig -4 hptjh lghlgkjfhl kjghlj 466y 46y9 560y jlj hlykhj35",
-        },
-        {
-            name: "2",
-            message: "123112 312 21 5325435",
-        },
-        ]
+
+    const [message,  setMessage] = useState(" ")
+    const [messages, setMessages] = useState([])
+    function send () {
+        messages.push({
+            name: "0",
+            message: message,
+        })
+        setMessages([...messages]);
+    }
+    function typing(e) {
+        console.log(e.target.value)
+        setMessage(e.target.value);
+    }
+
     return (<List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-        {messages.map(function(object, i) {
+        <Paper
+        component="form"
+        sx={{ p: '2px 4px', display: 'flex', alignItems: 'center' }}
+        >
+        <InputBase
+        sx={{ ml: 1, flex: 1 }}
+        placeholder="Message..."
+        onChange={typing}
+        />
+        <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
+        <IconButton color="primary" sx={{ p: '10px' }} aria-label="directions" onClick={send}>
+            send
+        </IconButton>
+        </Paper>
+        <br />
+        <br />
+        {   [...messages].reverse().map(function(object, i) {
             return (<ListItem key={i}>
                 <ListItemAvatar>
                 <Avatar>
@@ -35,19 +57,6 @@ export default function Chat() {
                 <ListItemText primary={object.name} secondary={object.message} />
             </ListItem>) 
         })}
-      <Paper
-      component="form"
-      sx={{ p: '2px 4px', display: 'flex', alignItems: 'center' }}
-      >
-      <InputBase
-      sx={{ ml: 1, flex: 1 }}
-      placeholder="Message..."
-      />
-      <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
-      <IconButton color="primary" sx={{ p: '10px' }} aria-label="directions">
-          send
-      </IconButton>
-      </Paper>
       </List>
     )
   }
