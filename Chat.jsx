@@ -30,7 +30,6 @@ export default function Chat() {
         //setMessages([...messages]);
     }
     function typing(e) {
-        console.log(e.target.value)
         setMessage(e.target.value);
     }
 

@@ -8,6 +8,7 @@ import Grid from '@mui/material/Grid2';
 
 import Chat from  './Chat.jsx';
 import Panel from './Panel.jsx';
+import Stream from './Stream.jsx';
 
 const root = createRoot(document.getElementById('app'));
 root.render( <Box component="section">
@@ -19,7 +20,7 @@ root.render( <Box component="section">
    </Grid>
    <Grid size={{xs: 12, md: 8}}>
      <div id="stream">
-      stream
+      <Stream />
      </div>
    </Grid>
    <Grid size={{xs: 12, md: 4}}>

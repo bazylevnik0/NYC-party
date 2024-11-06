@@ -9,7 +9,7 @@ body {
   margin: 2.5% 5% ;
   width: 90%;
   min-height: 90vh;
-  background-color: gray;
+  background-color: white;
 }
 #stream {
   background-color: red;
@@ -22,8 +22,10 @@ body {
   overflow-x: hidden;
 }
 #panel {
-  background-color: blue;
+  background-color: white;
+  box-shadow: 0px 10px 7.5px gray;
   height: 10vh;
+  border-radius: 5px;
 }
 
 .MuiList-root {
