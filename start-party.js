@@ -20,10 +20,9 @@ io.on('connection', (socket) => {
   console.log('a guest connected to socket');
   socket.on('socket_chat', (data) => {
     messages.push( JSON.parse(data))
-    console.log(messages);
     io.emit('broadcast_chat', JSON.stringify(messages));
   });
   socket.on('socket_audio', (data) => {
-    console.log(JSON.parse(data));
+    io.emit('broadcast_audio', data);
   })
 });

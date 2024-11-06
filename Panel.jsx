@@ -25,19 +25,33 @@ export default function Panel() {
                     mediaRecorderAudio = new MediaRecorder(stream);
                     mediaRecorderAudio.addEventListener("dataavailable", async (stream) => {
                         // Send stream data while mediaRecorderAudio is active
-                            let blob = new Blob([stream.data], { type: "audio/webm; codecs=opus" });
+                            let blob = new Blob([stream.data], { type: "audio/ogg; codecs=opus" });
                             let buffer = await blob.arrayBuffer();
                             let data_to_send =  new Uint8Array(buffer);
-                            console.log(data_to_send)
                             socket.emit('socket_audio',JSON.stringify(data_to_send))
+                            mediaRecorderAudio.requestData()
                     });
-                    mediaRecorderAudio.start(100);
+                    mediaRecorderAudio.start(1000);
                 })
             }
         } else {
             mediaRecorderAudio.stop();
         }
     }
+
+    socket.on('broadcast_audio', function(data) {
+        (async () => {
+    
+          console.log(new Uint8Array(Object.values(JSON.parse(data))))
+          let blob  = new Blob( [new Uint8Array(Object.values(JSON.parse(data))).buffer], { type: "audio/ogg; codecs=opus" });
+          var url   = await URL.createObjectURL( blob );
+          var audio = new Audio();
+          audio.src = url;
+          audio.play();
+        })();
+       
+    });
+
     return (<div>
          <label>Audio: </label><Switch onChange={change_state_audio} />
          <label>Video: </label><Switch  />
