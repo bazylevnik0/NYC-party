@@ -64,11 +64,12 @@ export default function Stream(props) {
     const detector = faceLandmarksDetection.createDetector(model, detectorConfig);
     
     const interval_video = useRef();
+
+    let video = document.createElement('video');
+        video.autoplay = true;
+
     
     if (props.video.videoActive) {
-        let video = document.createElement('video');
-            video.autoplay = true;
-
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices.getUserMedia(
             {
