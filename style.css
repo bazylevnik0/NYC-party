@@ -12,20 +12,24 @@ body {
   background-color: white;
 }
 #stream {
-  background-color: red;
+  background-color: white;
   height: 80vh;
+  box-shadow: 0px 5px 7.5px gray;
+  border-bottom-left-radius: 5px;
 }
 #chat {
-  background-color: green;
+  background-color: white;
   height: 80vh;
   overflow-y: scroll;
   overflow-x: hidden;
+  box-shadow: 0px 5px 7.5px gray;
 }
 #panel {
   background-color: white;
-  box-shadow: 0px 10px 7.5px gray;
+  box-shadow: 0px 5px 7.5px gray;
   height: 10vh;
-  border-radius: 5px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
 }
 
 .MuiList-root {
