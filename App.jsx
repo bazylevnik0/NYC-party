@@ -32,16 +32,18 @@ const [audioActive, setAudioActive] = useState(false);
            </Grid>
            <Grid size={{xs: 12, md: 8}}>
              <div id="stream">
-              <Stream video={{
-                videoActive: videoActive
-              }}/>
+              <Stream 
+                video={{
+                  videoActive: videoActive
+                }}
+                audio={{
+                  audioActive: audioActive,
+                }}/>
              </div>
            </Grid>
            <Grid size={{xs: 12, md: 4}}>
             <div id="chat">
-              <Chat audio={{
-                audioActive: audioActive,
-              }}/> 
+              <Chat /> 
             </div>
            </Grid>
         </Grid>
