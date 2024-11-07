@@ -1,7 +1,6 @@
 import React from 'react';
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
 
-import { createRoot } from 'react-dom/client'
 import { Canvas } from '@react-three/fiber'
 
 
@@ -9,8 +8,8 @@ export default function Stream(props) {
     // Audio
     var socket = io();
 
-    let mediaRecorderAudio;
     let interval_audio;
+    let check = document.getElementById("switch_audio") 
     if (props.audio.audioActive) {
         // Ask permission
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -21,20 +20,27 @@ export default function Stream(props) {
             )
             // If success
             .then((stream) => {
-                mediaRecorderAudio = new MediaRecorder(stream);
+                let mediaRecorderAudio = new MediaRecorder(stream);
                 mediaRecorderAudio.addEventListener("dataavailable", async (stream) => {
                     // Send stream data while mediaRecorderAudio is active
                     let blob = new Blob([stream.data], { type: "audio/ogg; codecs=opus" });
                     let buffer = await blob.arrayBuffer();
                     let data_to_send =  new Uint8Array(buffer);
-                    socket.emit('socket_audio',JSON.stringify(data_to_send))
+                    socket.emit('socket_audio',JSON.stringify(data_to_send));
                 });
-                interval_audio = setInterval(()=>{mediaRecorderAudio.stop();mediaRecorderAudio.start(1000)},1000);
+                interval_audio = setInterval(()=>{ 
+                    mediaRecorderAudio.stop();
+                    if (check.checked) {
+                        mediaRecorderAudio.start(1000);
+                    } else {
+                        mediaRecorderAudio.stop();
+                        clearInterval(interval_audio);
+                    }
+                },1000,);
             })
         }
     } else {
-        //mediaRecorderAudio.stop();
-        clearInterval(interval_audio)
+        //check = false;
     }
 
     let sounds = [];
@@ -82,7 +88,6 @@ export default function Stream(props) {
             })
         }
     } else {
-        console.log(2)
         clearInterval(interval_video.current);
     }
 
