@@ -1,7 +1,9 @@
 import React from 'react';
-import { useRef } from 'react';
+import { useState, useRef } from 'react';
 
 import { Canvas } from '@react-three/fiber'
+
+import Skull from './Skull.jsx'
 
 
 export default function Stream(props) {
@@ -68,7 +70,7 @@ export default function Stream(props) {
     let video = document.createElement('video');
         video.autoplay = true;
 
-    
+    const [rotation, setRotation] = useState([]);
     if (props.video.videoActive) {
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices.getUserMedia(
@@ -77,15 +79,20 @@ export default function Stream(props) {
             })
             // If success
             .then(async (stream) => {
+                //[0].keypoints[7] rightEye
+                //[0].keypoints[263] leftEye
                 let detector_temp = await detector;
                 video.srcObject = stream;
                 interval_video.current = setInterval(()=>{
                     const estimationConfig = {flipHorizontal: false};
                     (async()=>{
                         const faces = await detector_temp.estimateFaces(video, estimationConfig);
-                        console.log(faces)
+                        //console.log("asd")
+                        if (faces && faces[0] && faces[0].keypoints ) setRotation([0,faces[0].keypoints[7].z/50,0])
+                        //console.log("left: ",faces[0].keypoints[7].z,"right: ",faces[0].keypoints[263].z);
                     })();
                 },100)
+                
             })
         }
     } else {
@@ -93,12 +100,9 @@ export default function Stream(props) {
     }
 
     let answer_video_active = (<Canvas>
-                                <mesh>
-                                <boxGeometry args={[2, 2, 2]} />
-                                <meshPhongMaterial />
-                                </mesh>
+                                <Skull rotation={rotation}/>
                                 <ambientLight intensity={0.1} />
-                                <directionalLight position={[0, 0, 5]} color="red" />
+                                <directionalLight position={[0, 0, 5]} color="white" />
                                </Canvas>);  
 
     let answer_video_inactive = (<div>none</div>)
