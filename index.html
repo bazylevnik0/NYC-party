@@ -6,14 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NYC-party</title>
     <script src="/socket.io.js"></script>
-    <script type="text/javascript" src='https://cdn.jsdelivr.net/npm/sfmediastream@v1'></script>
-    <!-- Require the peer dependencies of face-landmarks-detection. -->
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core"></script>
-    <!-- You must explicitly require a TF.js backend if you're not using the TF.js union bundle. -->
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/face-landmarks-detection"></script>
+    <script src="/opencv.js"></script>
   </head>
-  <body><div id="app"></div></body>
+  <body><div id="app"></div>
+  <canvas id="canvas_temp" width="800px" height="600px"></canvas></body>
   <script type="module" src="/main.jsx"></script>
 </html>
